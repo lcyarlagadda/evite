@@ -11,7 +11,13 @@ const submitBtn = document.getElementById('submit-btn');
 const inviteScene = document.getElementById('invite-scene');
 const successScene = document.getElementById('success-scene');
 const successTitle = document.getElementById('success-title');
+const successIcon = document.getElementById('success-icon');
+const successMessage = document.getElementById('success-message');
+const successSub = document.getElementById('success-sub');
 const viewInviteBtn = document.getElementById('view-invite-btn');
+const guestsGroup = document.getElementById('guests-group');
+const guestInputs = rsvpForm.querySelectorAll('input[name="guests"]');
+const attendanceInputs = rsvpForm.querySelectorAll('input[name="attendance"]');
 const confettiLayer = document.getElementById('confetti-layer');
 const pollenField = document.getElementById('pollen-field');
 
@@ -140,15 +146,50 @@ function showInviteReady() {
 openRsvpBtn.addEventListener('click', openRsvpSheet);
 backToInviteBtn.addEventListener('click', closeRsvpSheet);
 
+function updateGuestField() {
+  const attendance = rsvpForm.querySelector('input[name="attendance"]:checked')?.value;
+  const declining = attendance === 'no';
+
+  guestsGroup.classList.toggle('hidden', declining);
+  guestInputs.forEach((input) => {
+    input.required = !declining;
+    if (declining) input.checked = false;
+  });
+}
+
+function showSuccessScreen(payload) {
+  if (payload.attendance === 'no') {
+    successIcon.textContent = '🍯';
+    successTitle.textContent = `We'll miss you, ${payload.name}!`;
+    successMessage.textContent = 'Wish you could be there!';
+    successSub.textContent = 'Hope to meet you soon.';
+  } else if (payload.attendance === 'maybe') {
+    successIcon.textContent = '🐝';
+    successTitle.textContent = `Thanks, ${payload.name}!`;
+    successMessage.textContent = 'Hope you can make it!';
+    successSub.textContent = "We'll keep a spot buzzing for you — let us know when you decide.";
+  } else {
+    successIcon.textContent = '🎉';
+    successTitle.textContent = `Thanks, ${payload.name}!`;
+    successMessage.textContent = 'Your RSVP fluttered straight to Himani & Praneeth.';
+    successSub.textContent = "We can't wait to celebrate with you!";
+  }
+}
+
+attendanceInputs.forEach((input) => {
+  input.addEventListener('change', updateGuestField);
+});
+
 rsvpForm.addEventListener('submit', async (e) => {
   e.preventDefault();
 
   const formData = new FormData(rsvpForm);
+  const attendance = formData.get('attendance');
   const payload = {
     name: formData.get('name').trim(),
-    attendance: formData.get('attendance'),
+    attendance,
     prediction: formData.get('prediction'),
-    guests: formData.get('guests'),
+    guests: attendance === 'no' ? '0' : formData.get('guests'),
   };
 
   submitBtn.disabled = true;
@@ -167,8 +208,8 @@ rsvpForm.addEventListener('submit', async (e) => {
 
     closeRsvpSheet();
     hideInvitePopup();
-    popConfetti(55);
-    successTitle.textContent = `Thanks, ${payload.name}!`;
+    popConfetti(payload.attendance === 'no' ? 30 : 55);
+    showSuccessScreen(payload);
     showScene(successScene);
   } catch (err) {
     formStatus.textContent = err.message;

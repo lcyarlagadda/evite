@@ -32,7 +32,7 @@ export async function handler(event) {
 
   const { name, attendance, prediction, guests } = body;
 
-  if (!name || !attendance || !prediction || !guests) {
+  if (!name || !attendance || !prediction || (attendance !== 'no' && !guests)) {
     return {
       statusCode: 400,
       headers: { 'Content-Type': 'application/json' },
@@ -44,7 +44,7 @@ export async function handler(event) {
     name: String(name).trim(),
     attendance,
     prediction,
-    guests: String(guests),
+    guests: attendance === 'no' ? '0' : String(guests),
   };
 
   try {

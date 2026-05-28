@@ -36,7 +36,7 @@ function saveRsvp(data) {
 app.post('/api/rsvp', async (req, res) => {
   const { name, attendance, prediction, guests } = req.body;
 
-  if (!name || !attendance || !prediction || !guests) {
+  if (!name || !attendance || !prediction || (attendance !== 'no' && !guests)) {
     return res.status(400).json({ error: 'Please fill in all fields.' });
   }
 
@@ -50,7 +50,7 @@ app.post('/api/rsvp', async (req, res) => {
     name: String(name).trim(),
     attendance,
     prediction,
-    guests: String(guests),
+    guests: attendance === 'no' ? '0' : String(guests),
   };
 
   try {
