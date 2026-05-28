@@ -48,7 +48,7 @@ fly launch --no-deploy
 fly volumes create rsvp_data --region iad --size 1
 
 fly secrets set RSVP_TO_EMAIL=your-email@gmail.com
-fly secrets set SMTP_HOST=smtp.gmail.com SMTP_PORT=587 SMTP_USER=your-email@gmail.com SMTP_PASS=your-app-password
+fly secrets set SMTP_HOST=your-smtp-host SMTP_PORT=587 SMTP_USER=your-email@gmail.com SMTP_PASS=your-app-password
 fly secrets set NTFY_TOPIC=your-unique-topic-name NTFY_SERVER=https://ntfy.sh
 ```
 
@@ -110,7 +110,7 @@ Open http://localhost:5173
 
 Configure at least one:
 
-**Email** — Gmail App Password in `SMTP_*` and `RSVP_TO_EMAIL`
+**Email** — set `RSVP_TO_EMAIL`, `SMTP_HOST`, `SMTP_USER`, and `SMTP_PASS` (Gmail App Password) in your host's env settings
 
 **ntfy push** — set `NTFY_TOPIC`, subscribe in the ntfy app (works without SMTP)
 
