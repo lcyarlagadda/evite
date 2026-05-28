@@ -92,8 +92,11 @@ function openRsvpSheet() {
   openRsvpBtn.classList.add('hidden');
   rsvpSheet.classList.remove('hidden');
   document.body.classList.add('rsvp-sheet-open');
-  requestAnimationFrame(() => rsvpSheet.classList.add('is-open'));
-  document.getElementById('name').focus();
+  requestAnimationFrame(() => {
+    rsvpSheet.classList.add('is-open');
+    rsvpSheet.querySelector('.rsvp-sheet-panel')?.scrollTo(0, 0);
+    document.getElementById('name').focus({ preventScroll: true });
+  });
 }
 
 function closeRsvpSheet() {

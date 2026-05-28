@@ -26,9 +26,9 @@ if (isDev) {
 app.use(express.json());
 
 const ATTENDANCE_LABELS = {
-  yes: 'Joyfully Accepts',
-  no: 'Bummer, no',
-  maybe: 'Still deciding',
+  yes: 'Absolutely, yes!',
+  no: 'Bummer, no.',
+  maybe: 'Still deciding, may be?',
 };
 
 const PREDICTION_LABELS = {
