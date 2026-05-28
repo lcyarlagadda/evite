@@ -140,16 +140,44 @@ function showInviteReady() {
 openRsvpBtn.addEventListener('click', openRsvpSheet);
 backToInviteBtn.addEventListener('click', closeRsvpSheet);
 
-rsvpForm.addEventListener('submit', (e) => {
+rsvpForm.addEventListener('submit', async (e) => {
   e.preventDefault();
 
-  const name = new FormData(rsvpForm).get('name').trim();
+  const formData = new FormData(rsvpForm);
+  const payload = {
+    name: formData.get('name').trim(),
+    attendance: formData.get('attendance'),
+    prediction: formData.get('prediction'),
+    guests: formData.get('guests'),
+  };
 
-  closeRsvpSheet();
-  hideInvitePopup();
-  popConfetti(55);
-  successTitle.textContent = `Thanks, ${name}!`;
-  showScene(successScene);
+  submitBtn.disabled = true;
+  submitBtn.querySelector('span').textContent = 'Sending…';
+  formStatus.classList.add('hidden');
+  formStatus.classList.remove('success', 'error');
+
+  try {
+    const res = await fetch('/api/rsvp', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload),
+    });
+    const data = await res.json().catch(() => ({}));
+    if (!res.ok) throw new Error(data.error || 'Failed to send RSVP');
+
+    closeRsvpSheet();
+    hideInvitePopup();
+    popConfetti(55);
+    successTitle.textContent = `Thanks, ${payload.name}!`;
+    showScene(successScene);
+  } catch (err) {
+    formStatus.textContent = err.message;
+    formStatus.classList.remove('hidden');
+    formStatus.classList.add('error');
+  } finally {
+    submitBtn.disabled = false;
+    submitBtn.querySelector('span').textContent = 'Send RSVP';
+  }
 });
 
 viewInviteBtn.addEventListener('click', () => {
