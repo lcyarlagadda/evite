@@ -1,0 +1,10 @@
+# Replace with your domain, or use :80 for local testing
+# Caddy (Apache 2.0) auto-provisions HTTPS via Let's Encrypt (open source)
+your-domain.com {
+    reverse_proxy invite:8080
+}
+
+# Local testing without a domain:
+# :80 {
+#     reverse_proxy invite:8080
+# }
