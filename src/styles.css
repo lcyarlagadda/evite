@@ -529,9 +529,27 @@ body {
   left: 0;
   right: 0;
   height: 55%;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  padding-bottom: 10%;
   background: linear-gradient(to top, var(--envelope-shadow), var(--envelope));
   clip-path: polygon(0 100%, 50% 0, 100% 100%);
   z-index: 4;
+}
+
+.envelope-names {
+  font-family: var(--font-display);
+  font-size: clamp(0.95rem, 3.8vw, 1.15rem);
+  font-weight: 600;
+  font-style: italic;
+  color: var(--ink);
+  letter-spacing: 0.03em;
+  line-height: 1.2;
+  text-align: center;
+  white-space: nowrap;
+  pointer-events: none;
+  text-shadow: 0 1px 0 rgba(255, 255, 255, 0.45);
 }
 
 .envelope-flap {
@@ -1335,6 +1353,11 @@ body.viewing-invite .bee-sky {
 
   .envelope-flap-inner::after {
     display: none;
+  }
+
+  .envelope-names {
+    font-size: clamp(0.88rem, 4vw, 1.05rem);
+    padding-bottom: 2px;
   }
 
   .envelope-stack.card-slide {
