@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Guest List — What Will It Bee?</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400&family=Fredoka:wght@400;500;600&family=Pacifico&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="/src/styles.css" />
+    <link rel="stylesheet" href="/src/guest-list.css" />
+  </head>
+  <body class="guest-list-page">
+    <div class="bg-honeycomb" aria-hidden="true"></div>
+    <div class="bg-pattern" aria-hidden="true"></div>
+
+    <main class="guest-list-shell">
+      <header class="guest-list-header">
+        <p class="guest-list-kicker">Himani &amp; Praneeth</p>
+        <h1 class="guest-list-title">Guest List</h1>
+        <p class="guest-list-subtitle">RSVPs for the gender reveal</p>
+      </header>
+
+      <section id="guest-dashboard" class="guest-dashboard" aria-live="polite">
+        <div id="summary-cards" class="summary-cards"></div>
+
+        <div class="guest-table-wrap card-panel">
+          <div class="guest-table-toolbar">
+            <h2>All RSVPs</h2>
+            <div class="guest-table-actions">
+              <button type="button" id="refresh-btn" class="btn-secondary">Refresh</button>
+              <button type="button" id="clear-btn" class="btn-danger">Clear all</button>
+            </div>
+          </div>
+          <p id="guest-empty" class="guest-empty hidden">No RSVPs yet.</p>
+          <div id="guest-table-scroll" class="guest-table-scroll">
+            <table class="guest-table" id="guest-table">
+              <thead>
+                <tr>
+                  <th scope="col">Name</th>
+                  <th scope="col">RSVP</th>
+                  <th scope="col">Prediction</th>
+                  <th scope="col">Guests</th>
+                  <th scope="col">Received</th>
+                </tr>
+              </thead>
+              <tbody id="guest-table-body"></tbody>
+            </table>
+          </div>
+        </div>
+
+        <p class="guest-list-footer">
+          <a href="/">← Back to invite</a>
+        </p>
+      </section>
+
+      <p id="load-error" class="guest-load-error hidden" role="alert"></p>
+    </main>
+
+    <script type="module" src="/src/guests.js"></script>
+  </body>
+</html>

@@ -17,7 +17,7 @@ Evite-style animated invite for Himani and Praneeth's gender reveal. Guests open
 | Hosting B | Coolify on VPS | MIT |
 | Hosting C | Docker Compose + Caddy | OSS self-host |
 
-RSVPs are also saved to `data/rsvps.jsonl` as a backup log.
+RSVPs are saved to `data/rsvps.jsonl` on Fly/Docker, and to **Netlify Blobs** on Netlify (persists across redeploys). View them at `/guests`.
 
 ---
 

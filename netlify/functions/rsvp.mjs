@@ -1,4 +1,5 @@
 import { deliverRsvpNotifications, hasNotificationConfig } from '../../lib/rsvp-notify.js';
+import { appendRsvpNetlify } from '../../lib/rsvp-blobs.js';
 
 export async function handler(event) {
   if (event.httpMethod !== 'POST') {
@@ -48,6 +49,7 @@ export async function handler(event) {
   };
 
   try {
+    await appendRsvpNetlify(data);
     await deliverRsvpNotifications(data);
     return {
       statusCode: 200,

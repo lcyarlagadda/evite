@@ -6,9 +6,10 @@ WORKDIR /app
 COPY package.json package-lock.json ./
 RUN npm ci
 
-COPY index.html vite.config.js ./
+COPY index.html guests.html vite.config.js ./
 COPY public ./public
 COPY src ./src
+COPY lib ./lib
 RUN npm run build
 
 FROM node:22-alpine AS runner
@@ -23,6 +24,7 @@ RUN npm ci --omit=dev && npm cache clean --force
 
 COPY --from=builder /app/dist ./dist
 COPY server ./server
+COPY lib ./lib
 
 RUN mkdir -p /app/data
 

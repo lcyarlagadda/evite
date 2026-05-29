@@ -8,8 +8,14 @@
 [functions]
   directory = "netlify/functions"
   node_bundler = "esbuild"
+  external_node_modules = ["@netlify/blobs"]
 
 [[redirects]]
   from = "/api/rsvp"
   to = "/.netlify/functions/rsvp"
+  status = 200
+
+[[redirects]]
+  from = "/api/guests"
+  to = "/.netlify/functions/guests"
   status = 200
