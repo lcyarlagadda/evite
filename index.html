@@ -29,38 +29,49 @@
     <div class="sparkle-burst hidden" id="sparkle-burst" aria-hidden="true"></div>
     <div class="confetti-layer" id="confetti-layer" aria-hidden="true"></div>
 
-    <!-- Step 1: Invitation -->
+    <!-- Step 1: Envelope → invite reveal -->
     <section id="invite-scene" class="scene scene-active" aria-label="Your invitation">
-      <div id="envelope-stage">
-        <p class="tap-hint" id="tap-hint">Tap the envelope — something buzz-worthy awaits 🍯</p>
+      <div class="invite-backdrop hidden" id="invite-backdrop" aria-hidden="true"></div>
 
-        <div class="envelope-wrapper" id="envelope-wrapper">
-          <div class="envelope-glow" aria-hidden="true"></div>
-          <div class="envelope" id="envelope">
-            <div class="envelope-back"></div>
-            <div class="envelope-front-left"></div>
-            <div class="envelope-front-right"></div>
-            <div class="envelope-front-bottom"></div>
-            <div class="envelope-flap">
-              <div class="wax-seal">
-                <span class="seal-icon">🐝</span>
+      <div id="envelope-stage">
+        <p class="tap-hint" id="tap-hint">
+          <span class="tap-hint-action">Tap the envelope</span>
+          <span class="tap-hint-tagline">something buzz-worthy awaits</span>
+          <span class="tap-hint-icon" aria-hidden="true">🍯</span>
+        </p>
+
+        <div class="envelope-stack" id="envelope-stack">
+          <div class="envelope-wrapper" id="envelope-wrapper">
+            <div class="envelope-glow" aria-hidden="true"></div>
+            <div class="envelope" id="envelope">
+              <div class="envelope-back"></div>
+              <div class="envelope-liner" aria-hidden="true"></div>
+              <div class="envelope-pocket">
+                <div class="invite-card" id="invite-card">
+                  <img src="/invite.png" alt="Gender Reveal Invitation for Himani & Praneeth" />
+                </div>
+              </div>
+              <div class="envelope-front-left"></div>
+              <div class="envelope-front-right"></div>
+              <div class="envelope-front-bottom"></div>
+              <div class="envelope-flap">
+                <div class="envelope-flap-inner" aria-hidden="true"></div>
+                <div class="wax-seal">
+                  <span class="seal-icon">🐝</span>
+                </div>
               </div>
             </div>
           </div>
         </div>
       </div>
-    </section>
 
-    <!-- Invite image popup -->
-    <div class="invite-popup-overlay hidden" id="invite-popup" role="dialog" aria-modal="true" aria-label="Your invitation">
-      <div class="invite-popup-card">
-        <img src="/invite.png" alt="Gender Reveal Invitation for Himani & Praneeth" />
+      <div class="invite-actions hidden" id="invite-actions">
         <button type="button" class="btn btn-primary btn-buzz invite-rsvp-btn" id="open-rsvp-btn">
           <span>Send RSVP</span>
           <span class="btn-bee">🐝</span>
         </button>
       </div>
-    </div>
+    </section>
 
     <!-- RSVP form — slides up from bottom over the invite -->
     <div class="rsvp-sheet hidden" id="rsvp-sheet" aria-label="RSVP form">

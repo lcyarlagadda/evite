@@ -1,7 +1,11 @@
 const envelopeStage = document.getElementById('envelope-stage');
+const envelopeStack = document.getElementById('envelope-stack');
 const envelopeWrapper = document.getElementById('envelope-wrapper');
 const tapHint = document.getElementById('tap-hint');
-const invitePopup = document.getElementById('invite-popup');
+const inviteCard = document.getElementById('invite-card');
+const envelopePocket = document.querySelector('.envelope-pocket');
+const inviteBackdrop = document.getElementById('invite-backdrop');
+const inviteActions = document.getElementById('invite-actions');
 const openRsvpBtn = document.getElementById('open-rsvp-btn');
 const rsvpSheet = document.getElementById('rsvp-sheet');
 const backToInviteBtn = document.getElementById('back-to-invite-btn');
@@ -76,20 +80,142 @@ function showScene(scene) {
   window.scrollTo({ top: 0, behavior: 'smooth' });
 }
 
-function hideInvitePopup() {
-  invitePopup.classList.remove('is-visible');
-  setTimeout(() => invitePopup.classList.add('hidden'), 400);
-  document.body.classList.remove('viewing-invite');
+function getInviteViewportCenterY(cardHeight) {
+  const topGap = 16;
+  const bottomReserve = 108;
+  const available = window.innerHeight - topGap - bottomReserve;
+  const height = cardHeight || Math.min(available, Math.min(window.innerHeight * 0.68, 680));
+
+  if (height <= available) {
+    return topGap + available / 2;
+  }
+
+  return window.innerHeight - bottomReserve - height / 2;
+}
+
+function getInviteCardLayout() {
+  const img = inviteCard.querySelector('img');
+  const topGap = 16;
+  const bottomReserve = 108;
+  const maxWidth = Math.min(520, window.innerWidth * 0.96);
+  const maxHeight = Math.min(window.innerHeight - topGap - bottomReserve, 680);
+  const aspect = (img?.naturalHeight || 1100) / (img?.naturalWidth || 800);
+
+  let targetWidth = maxWidth;
+  let cardHeight = targetWidth * aspect;
+  if (cardHeight > maxHeight) {
+    cardHeight = maxHeight;
+    targetWidth = maxHeight / aspect;
+  }
+
+  return { targetWidth, maxHeight: cardHeight, cardHeight };
+}
+
+function freezeEnvelopeStack() {
+  const rect = envelopeStack.getBoundingClientRect();
+  envelopeStack.style.position = 'fixed';
+  envelopeStack.style.top = `${rect.top}px`;
+  envelopeStack.style.left = `${rect.left}px`;
+  envelopeStack.style.width = `${rect.width}px`;
+  envelopeStack.style.zIndex = '40';
+}
+
+function restoreInviteCardToEnvelope() {
+  if (envelopePocket && inviteCard.parentElement !== envelopePocket) {
+    envelopePocket.appendChild(inviteCard);
+  }
+  inviteCard.style.cssText = '';
+  inviteCard.classList.remove('is-maximizing', 'is-maximized', 'is-centered');
+  envelopeWrapper.classList.remove('is-opening', 'card-slide', 'envelope-done');
+  envelopeStack.classList.remove('card-slide');
+  envelopeStack.style.cssText = '';
+}
+
+function maximizeCardCentered(animate = false, onDone) {
+  const peekRect = animate ? inviteCard.getBoundingClientRect() : null;
+
+  if (animate) freezeEnvelopeStack();
+
+  document.body.appendChild(inviteCard);
+  document.body.classList.add('invite-ready');
+  inviteBackdrop.classList.remove('hidden');
+  inviteActions.classList.remove('hidden');
+  envelopeWrapper.classList.add('envelope-done');
+
+  const { targetWidth, cardHeight } = getInviteCardLayout();
+  const targetCenterY = getInviteViewportCenterY(cardHeight);
+  const popEase = 'cubic-bezier(0.33, 1, 0.38, 1)';
+
+  inviteCard.style.position = 'fixed';
+  inviteCard.style.left = '50%';
+  inviteCard.style.maxHeight = '';
+  inviteCard.style.bottom = 'auto';
+  inviteCard.style.margin = '0';
+  inviteCard.style.zIndex = '65';
+  inviteCard.style.transformOrigin = 'center center';
+
+  if (animate && peekRect.width > 0) {
+    inviteCard.classList.add('is-maximizing');
+    inviteCard.style.top = `${peekRect.top + peekRect.height / 2}px`;
+    inviteCard.style.width = `${peekRect.width}px`;
+    inviteCard.style.transform = 'translate(-50%, -50%) scale(1)';
+    inviteCard.style.opacity = '1';
+    inviteCard.style.transition = 'none';
+    inviteCard.style.boxShadow = '0 6px 16px rgba(44, 36, 22, 0.16)';
+
+    inviteCard.offsetHeight;
+
+    inviteCard.style.transition = [
+      `top 0.58s ${popEase}`,
+      `width 0.58s ${popEase}`,
+      `transform 0.58s ${popEase}`,
+      'box-shadow 0.58s ease',
+    ].join(', ');
+
+    requestAnimationFrame(() => {
+      inviteBackdrop.classList.add('is-visible');
+      inviteCard.style.top = `${targetCenterY}px`;
+      inviteCard.style.width = `${targetWidth}px`;
+      inviteCard.style.transform = 'translate(-50%, -50%) scale(1)';
+      inviteCard.style.boxShadow = '0 24px 64px rgba(0, 0, 0, 0.35)';
+    });
+
+    inviteCard.addEventListener(
+      'transitionend',
+      (event) => {
+        if (event.propertyName !== 'top') return;
+        inviteCard.style.transition = '';
+        inviteCard.classList.remove('is-maximizing');
+        inviteCard.classList.add('is-maximized', 'is-centered');
+        onDone?.();
+      },
+      { once: true }
+    );
+    return;
+  }
+
+  inviteCard.style.top = `${targetCenterY}px`;
+  inviteCard.style.width = `${targetWidth}px`;
+  inviteCard.classList.add('is-maximized', 'is-centered');
+  inviteCard.style.transform = 'translate(-50%, -50%) scale(1)';
+  requestAnimationFrame(() => inviteBackdrop.classList.add('is-visible'));
+  onDone?.();
+}
+
+function hideInviteRevealed() {
+  document.body.classList.remove('invite-ready', 'viewing-invite');
+  inviteBackdrop.classList.remove('is-visible');
+  inviteActions.classList.add('hidden');
+  restoreInviteCardToEnvelope();
+  setTimeout(() => inviteBackdrop.classList.add('hidden'), 450);
   closeRsvpSheet();
 }
 
-function showInvitePopup() {
-  invitePopup.classList.remove('hidden');
+function showInviteRevealed(withConfetti = true, animate = true) {
   document.body.classList.add('viewing-invite');
-  openRsvpBtn.classList.remove('hidden');
-  requestAnimationFrame(() => {
-    invitePopup.classList.add('is-visible');
-    popConfetti();
+
+  maximizeCardCentered(animate, () => {
+    if (withConfetti) popConfetti();
   });
 }
 
@@ -110,19 +236,32 @@ function closeRsvpSheet() {
   document.body.classList.remove('rsvp-sheet-open');
   setTimeout(() => {
     rsvpSheet.classList.add('hidden');
-    if (invitePopup.classList.contains('is-visible')) {
+    if (document.body.classList.contains('invite-ready')) {
       openRsvpBtn.classList.remove('hidden');
     }
   }, 450);
 }
+
+const FLAP_OPEN_MS = 620;
+const PEEK_HOLD_MS = 100;
 
 function openEnvelope() {
   if (isOpen) return;
   isOpen = true;
 
   tapHint.classList.add('fade-out');
-  envelopeWrapper.classList.add('envelope-tapped');
-  showInvitePopup();
+
+  if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+    showInviteRevealed(true, false);
+    return;
+  }
+
+  envelopeWrapper.classList.add('is-opening', 'card-slide');
+  envelopeStack.classList.add('card-slide');
+
+  setTimeout(() => {
+    showInviteRevealed(true, true);
+  }, FLAP_OPEN_MS + PEEK_HOLD_MS);
 }
 
 envelopeWrapper.addEventListener('click', openEnvelope);
@@ -138,9 +277,8 @@ envelopeWrapper.setAttribute('aria-label', 'Open invitation envelope');
 
 function showInviteReady() {
   isOpen = true;
-  envelopeStage.classList.add('hidden');
   closeRsvpSheet();
-  showInvitePopup();
+  showInviteRevealed(false, false);
 }
 
 openRsvpBtn.addEventListener('click', openRsvpSheet);
@@ -207,7 +345,7 @@ rsvpForm.addEventListener('submit', async (e) => {
     if (!res.ok) throw new Error(data.error || 'Failed to send RSVP');
 
     closeRsvpSheet();
-    hideInvitePopup();
+    hideInviteRevealed();
     popConfetti(payload.attendance === 'no' ? 30 : 55);
     showSuccessScreen(payload);
     showScene(successScene);
@@ -223,7 +361,6 @@ rsvpForm.addEventListener('submit', async (e) => {
 
 viewInviteBtn.addEventListener('click', () => {
   showScene(inviteScene);
-  envelopeStage.classList.add('hidden');
   showInviteReady();
 });
 
