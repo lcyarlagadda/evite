@@ -265,6 +265,11 @@ body {
   overflow: visible;
 }
 
+.envelope-wrapper.is-opening.card-slide,
+.envelope-wrapper.card-slide {
+  overflow: visible;
+}
+
 .scene-active {
   opacity: 1;
   pointer-events: auto;
@@ -382,6 +387,8 @@ body {
 
 .envelope-stack.card-slide {
   overflow: visible;
+  padding-top: 150px;
+  margin-top: -150px;
 }
 
 .envelope-wrapper.is-opening .envelope-flap {
@@ -439,6 +446,19 @@ body {
   overflow: visible;
 }
 
+.envelope-wrapper.is-opening .envelope-front-left,
+.envelope-wrapper.is-opening .envelope-front-right {
+  z-index: 6;
+  transform: translateZ(3px);
+  -webkit-transform: translateZ(3px);
+}
+
+.envelope-wrapper.is-opening .envelope-front-bottom {
+  z-index: 7;
+  transform: translateZ(4px);
+  -webkit-transform: translateZ(4px);
+}
+
 .envelope-wrapper.is-opening:not(.card-slide) .envelope-pocket {
   overflow: hidden;
 }
@@ -457,7 +477,7 @@ body {
 /* Peek window: letter extends above envelope; bottom clipped at envelope edge */
 .envelope-stack.card-slide .envelope-pocket,
 .envelope-wrapper.card-slide .envelope-pocket {
-  top: -145px;
+  top: -150px;
   bottom: 0;
   overflow: hidden;
 }
@@ -1293,6 +1313,24 @@ body.viewing-invite .bee-sky {
     pointer-events: none;
   }
 
+  .envelope {
+    perspective: none;
+    transform-style: flat;
+  }
+
+  .envelope-flap {
+    transform-style: flat;
+  }
+
+  .envelope-flap-inner::after {
+    display: none;
+  }
+
+  .envelope-stack.card-slide {
+    padding-top: 140px;
+    margin-top: -140px;
+  }
+
   .envelope-wrapper.card-slide .envelope,
   .envelope-stack.card-slide .envelope,
   .envelope-wrapper.is-opening.card-slide .envelope {
@@ -1301,7 +1339,11 @@ body.viewing-invite .bee-sky {
 
   .envelope-stack.card-slide .envelope-pocket,
   .envelope-wrapper.card-slide .envelope-pocket {
-    top: -120px;
+    top: -140px;
+  }
+
+  .envelope-wrapper.is-opening .envelope-front-bottom {
+    z-index: 8;
   }
 
   .envelope-stack.card-slide .invite-card {

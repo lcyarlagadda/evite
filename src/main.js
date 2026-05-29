@@ -259,6 +259,11 @@ function openEnvelope() {
   envelopeWrapper.classList.add('is-opening', 'card-slide');
   envelopeStack.classList.add('card-slide');
 
+  // Force peek layout before paint on mobile to avoid a one-frame card-bottom flash
+  if (window.matchMedia('(max-width: 480px)').matches) {
+    inviteCard.getBoundingClientRect();
+  }
+
   setTimeout(() => {
     showInviteRevealed(true, true);
   }, FLAP_OPEN_MS + PEEK_HOLD_MS);
