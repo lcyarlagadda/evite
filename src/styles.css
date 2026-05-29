@@ -1320,6 +1320,17 @@ body.viewing-invite .bee-sky {
 
   .envelope-flap {
     transform-style: flat;
+    transform-origin: top center;
+    transition:
+      transform 0.62s cubic-bezier(0.33, 1, 0.38, 1),
+      opacity 0.45s ease 0.06s,
+      z-index 0s 0.32s;
+  }
+
+  .envelope-wrapper.is-opening .envelope-flap {
+    transform: scaleY(0);
+    opacity: 0;
+    z-index: 1;
   }
 
   .envelope-flap-inner::after {

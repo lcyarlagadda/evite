@@ -256,17 +256,35 @@ function openEnvelope() {
     return;
   }
 
+  const flap = envelopeWrapper.querySelector('.envelope-flap');
+  let popScheduled = false;
+
+  const schedulePop = () => {
+    if (popScheduled) return;
+    popScheduled = true;
+    setTimeout(() => showInviteRevealed(true, true), PEEK_HOLD_MS);
+  };
+
+  const onFlapEnd = (event) => {
+    if (event.target !== flap || event.propertyName !== 'transform') return;
+    flap.removeEventListener('transitionend', onFlapEnd);
+    schedulePop();
+  };
+
   envelopeWrapper.classList.add('is-opening', 'card-slide');
   envelopeStack.classList.add('card-slide');
 
-  // Force peek layout before paint on mobile to avoid a one-frame card-bottom flash
   if (window.matchMedia('(max-width: 480px)').matches) {
     inviteCard.getBoundingClientRect();
   }
 
+  flap.addEventListener('transitionend', onFlapEnd);
+
+  // Fallback if transform transition does not run (some mobile WebViews)
   setTimeout(() => {
-    showInviteRevealed(true, true);
-  }, FLAP_OPEN_MS + PEEK_HOLD_MS);
+    flap.removeEventListener('transitionend', onFlapEnd);
+    schedulePop();
+  }, FLAP_OPEN_MS + 80);
 }
 
 envelopeWrapper.addEventListener('click', openEnvelope);
