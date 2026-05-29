@@ -5,7 +5,9 @@ import path from 'path';
 import { fileURLToPath } from 'url';
 import {
   deliverRsvpNotifications,
+  hasEmailConfig,
   hasNotificationConfig,
+  sendEmail,
 } from '../lib/rsvp-notify.js';
 import {
   appendRsvp,
@@ -34,12 +36,6 @@ app.post('/api/rsvp', async (req, res) => {
     return res.status(400).json({ error: 'Please fill in all fields.' });
   }
 
-  if (!hasNotificationConfig()) {
-    return res.status(500).json({
-      error: 'Notifications are not configured. Set SMTP or NTFY settings on the server.',
-    });
-  }
-
   const data = {
     name: String(name).trim(),
     attendance,
@@ -48,12 +44,31 @@ app.post('/api/rsvp', async (req, res) => {
   };
 
   try {
-    appendRsvp(data);
-    await deliverRsvpNotifications(data);
+    if (hasEmailConfig()) {
+      const emailResult = await sendEmail(data);
+      if (!emailResult.ok) {
+        throw new Error('Could not send RSVP email.');
+      }
+    } else if (!hasNotificationConfig()) {
+      return res.status(500).json({
+        error: 'Email is not configured. Set RSVP_TO_EMAIL and SMTP settings.',
+      });
+    } else {
+      await deliverRsvpNotifications(data);
+    }
+
+    try {
+      appendRsvp(data);
+    } catch (saveErr) {
+      console.error('RSVP email sent but not saved locally:', saveErr.message);
+    }
+
     res.json({ success: true });
   } catch (err) {
     console.error('RSVP failed:', err.message);
-    res.status(500).json({ error: 'Failed to send RSVP. Please try again later.' });
+    res.status(500).json({
+      error: err.message || 'Failed to send RSVP. Please try again later.',
+    });
   }
 });
 

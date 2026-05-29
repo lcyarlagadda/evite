@@ -365,7 +365,9 @@ rsvpForm.addEventListener('submit', async (e) => {
       body: JSON.stringify(payload),
     });
     const data = await res.json().catch(() => ({}));
-    if (!res.ok) throw new Error(data.error || 'Failed to send RSVP');
+    if (!res.ok) {
+      throw new Error(data.error || 'Failed to send RSVP. Please try again.');
+    }
 
     closeRsvpSheet();
     hideInviteRevealed();

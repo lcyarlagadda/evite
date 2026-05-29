@@ -94,6 +94,18 @@ Caddy auto-provisions HTTPS via Let's Encrypt.
 
 ---
 
+## Netlify
+
+1. Connect the repo in Netlify and deploy (build: `npm run build`, publish: `dist`).
+2. In **Site settings → Environment variables**, add:
+   - `RSVP_TO_EMAIL`, `SMTP_HOST`, `SMTP_PORT`, `SMTP_USER`, `SMTP_PASS` (required for RSVP email)
+   - `NTFY_TOPIC` (optional push alerts)
+3. Redeploy after changing env vars.
+
+RSVPs are stored in **Netlify Blobs** (site-wide, survives redeploys). View them at `/guests`.
+
+---
+
 ## Local development
 
 ```bash

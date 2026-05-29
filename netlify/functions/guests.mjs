@@ -1,48 +1,42 @@
-import { clearRsvpsNetlify, listRsvpsNetlify } from '../../lib/rsvp-blobs.js';
+import {
+  clearRsvpStore,
+  listRsvpsFromStore,
+} from '../../lib/netlify-store.js';
 import { summarizeRsvps } from '../../lib/rsvp-summary.js';
 
-export async function handler(event) {
-  if (event.httpMethod === 'DELETE') {
+const json = (body, status = 200) =>
+  Response.json(body, {
+    status,
+    headers: { 'Content-Type': 'application/json' },
+  });
+
+export default async (request) => {
+  if (request.method === 'DELETE') {
     try {
-      await clearRsvpsNetlify();
-      return {
-        statusCode: 200,
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ success: true }),
-      };
+      await clearRsvpStore();
+      return json({ success: true });
     } catch (err) {
       console.error('Clear guest list failed:', err.message);
-      return {
-        statusCode: 500,
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ error: 'Could not clear guest list.' }),
-      };
+      return json({ error: 'Could not clear guest list.' }, 500);
     }
   }
 
-  if (event.httpMethod !== 'GET') {
-    return {
-      statusCode: 405,
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ error: 'Method not allowed' }),
-    };
+  if (request.method !== 'GET') {
+    return json({ error: 'Method not allowed' }, 405);
   }
 
   try {
-    const guests = await listRsvpsNetlify();
-    const summary = summarizeRsvps(guests);
-
-    return {
-      statusCode: 200,
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ guests, summary }),
-    };
+    const guests = await listRsvpsFromStore();
+    return json({
+      guests,
+      summary: summarizeRsvps(guests),
+    });
   } catch (err) {
     console.error('Guest list failed:', err.message);
-    return {
-      statusCode: 500,
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ error: 'Could not load guest list.' }),
-    };
+    return json({ error: 'Could not load guest list.' }, 500);
   }
-}
+};
+
+export const config = {
+  path: '/api/guests',
+};

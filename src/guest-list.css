@@ -81,6 +81,14 @@
   text-align: center;
 }
 
+.guest-load-error.is-warning {
+  color: var(--honey-deep);
+  background: var(--honey-light);
+  border: 1px solid rgba(217, 154, 26, 0.35);
+  border-radius: 12px;
+  padding: 0.85rem 1rem;
+}
+
 .btn-primary,
 .btn-secondary,
 .btn-danger {
