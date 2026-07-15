@@ -1,3 +1,5 @@
+import inviteImg from './assets/invite.png';
+
 const envelopeStage = document.getElementById('envelope-stage');
 const envelopeStack = document.getElementById('envelope-stack');
 const envelopeWrapper = document.getElementById('envelope-wrapper');
@@ -24,6 +26,17 @@ const headcountInputs = rsvpForm.querySelectorAll('input[name="adults"], input[n
 const attendanceInputs = rsvpForm.querySelectorAll('input[name="attendance"]');
 const confettiLayer = document.getElementById('confetti-layer');
 const pollenField = document.getElementById('pollen-field');
+const inviteImgEl = inviteCard?.querySelector('img');
+
+if (inviteImgEl) {
+  inviteImgEl.src = inviteImg;
+}
+
+const invitePreload = document.createElement('link');
+invitePreload.rel = 'preload';
+invitePreload.as = 'image';
+invitePreload.href = inviteImg;
+document.head.appendChild(invitePreload);
 
 let isOpen = false;
 
