@@ -363,7 +363,9 @@
   }
 
   .guest-table th:nth-child(5),
-  .guest-table td:nth-child(5) {
-    min-width: 7rem;
+  .guest-table td:nth-child(5),
+  .guest-table th:nth-child(6),
+  .guest-table td:nth-child(6) {
+    min-width: 4rem;
   }
 }

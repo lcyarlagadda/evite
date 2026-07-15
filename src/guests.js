@@ -1,4 +1,4 @@
-import { summarizeRsvps } from '../lib/rsvp-summary.js';
+import { getRsvpHeadCount, summarizeRsvps } from '../lib/rsvp-summary.js';
 
 const summaryCards = document.getElementById('summary-cards');
 const guestTableBody = document.getElementById('guest-table-body');
@@ -42,6 +42,8 @@ function renderSummary(summary) {
     { label: 'Maybe', value: stats.maybe ?? 0, className: 'summary-card--maybe' },
     { label: 'Not coming', value: stats.no ?? 0, className: 'summary-card--no' },
     { label: 'Total guests', value: stats.guestCount ?? 0 },
+    { label: 'Adults', value: stats.adultCount ?? 0 },
+    { label: 'Kids', value: stats.kidCount ?? 0 },
   ]
     .map(
       (card) => `
@@ -75,14 +77,17 @@ function renderGuests(guests) {
     .map((guest) => {
       const attendance = guest.attendance || '';
       const prediction = guest.prediction || '';
-      const guestsLabel = attendance === 'no' ? '—' : (guest.guests ?? '—');
+      const { adults, kids } = getRsvpHeadCount(guest);
+      const adultsLabel = attendance === 'no' ? '—' : adults;
+      const kidsLabel = attendance === 'no' ? '—' : kids;
 
       return `
         <tr>
           <td>${escapeHtml(guest.name || '—')}</td>
           <td><span class="${badgeClass('', attendance)}">${ATTENDANCE_LABELS[attendance] || attendance}</span></td>
           <td><span class="${badgeClass('', prediction)}">${PREDICTION_LABELS[prediction] || prediction}</span></td>
-          <td>${escapeHtml(String(guestsLabel))}</td>
+          <td>${escapeHtml(String(adultsLabel))}</td>
+          <td>${escapeHtml(String(kidsLabel))}</td>
           <td>${formatDate(guest.receivedAt)}</td>
         </tr>
       `;

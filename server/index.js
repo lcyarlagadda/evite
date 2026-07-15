@@ -9,6 +9,7 @@ import {
   hasNotificationConfig,
   sendEmail,
 } from '../lib/rsvp-notify.js';
+import { normalizeRsvpEntry } from '../lib/rsvp-entry.js';
 import {
   appendRsvp,
   clearRsvps,
@@ -30,18 +31,18 @@ if (isDev) {
 app.use(express.json());
 
 app.post('/api/rsvp', async (req, res) => {
-  const { name, attendance, prediction, guests } = req.body;
+  const { name, attendance, prediction, adults, kids } = req.body;
 
-  if (!name || !attendance || !prediction || (attendance !== 'no' && !guests)) {
+  if (
+    !name ||
+    !attendance ||
+    !prediction ||
+    (attendance !== 'no' && (adults == null || kids == null))
+  ) {
     return res.status(400).json({ error: 'Please fill in all fields.' });
   }
 
-  const data = {
-    name: String(name).trim(),
-    attendance,
-    prediction,
-    guests: attendance === 'no' ? '0' : String(guests),
-  };
+  const data = normalizeRsvpEntry({ name, attendance, prediction, adults, kids });
 
   try {
     if (hasEmailConfig()) {

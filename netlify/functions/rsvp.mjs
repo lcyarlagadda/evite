@@ -1,4 +1,5 @@
 import { appendRsvpToStore } from '../../lib/netlify-store.js';
+import { normalizeRsvpEntry } from '../../lib/rsvp-entry.js';
 import { hasEmailConfig, sendEmail, sendNtfy } from '../../lib/rsvp-notify.js';
 
 const json = (body, status = 200) =>
@@ -29,18 +30,18 @@ export default async (request) => {
     return json({ error: 'Invalid request.' }, 400);
   }
 
-  const { name, attendance, prediction, guests } = body;
+  const { name, attendance, prediction, adults, kids } = body;
 
-  if (!name || !attendance || !prediction || (attendance !== 'no' && !guests)) {
+  if (
+    !name ||
+    !attendance ||
+    !prediction ||
+    (attendance !== 'no' && (adults == null || kids == null))
+  ) {
     return json({ error: 'Please fill in all fields.' }, 400);
   }
 
-  const data = {
-    name: String(name).trim(),
-    attendance,
-    prediction,
-    guests: attendance === 'no' ? '0' : String(guests),
-  };
+  const data = normalizeRsvpEntry({ name, attendance, prediction, adults, kids });
 
   try {
     await appendRsvpToStore(data);

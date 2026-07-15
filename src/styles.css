@@ -875,10 +875,33 @@ body.viewing-invite .bee-sky {
   display: none;
 }
 
+.headcount-row {
+  display: grid;
+  grid-template-columns: 4.5rem 1fr;
+  align-items: center;
+  gap: 0.5rem;
+  margin-top: 0.55rem;
+}
+
+.headcount-row:first-of-type {
+  margin-top: 0.35rem;
+}
+
+.headcount-label {
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: var(--ink-muted, #6b5d4a);
+}
+
 .guest-picker {
   display: grid;
   grid-template-columns: repeat(5, 1fr);
   gap: 0.4rem;
+}
+
+.guest-picker--headcount .guest-option span {
+  padding: 0.4rem 0;
+  font-size: 0.8rem;
 }
 
 .guest-option input {

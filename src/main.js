@@ -20,7 +20,7 @@ const successMessage = document.getElementById('success-message');
 const successSub = document.getElementById('success-sub');
 const viewInviteBtn = document.getElementById('view-invite-btn');
 const guestsGroup = document.getElementById('guests-group');
-const guestInputs = rsvpForm.querySelectorAll('input[name="guests"]');
+const headcountInputs = rsvpForm.querySelectorAll('input[name="adults"], input[name="kids"]');
 const attendanceInputs = rsvpForm.querySelectorAll('input[name="attendance"]');
 const confettiLayer = document.getElementById('confetti-layer');
 const pollenField = document.getElementById('pollen-field');
@@ -224,6 +224,7 @@ function openRsvpSheet() {
   openRsvpBtn.classList.add('hidden');
   rsvpSheet.classList.remove('hidden');
   document.body.classList.add('rsvp-sheet-open');
+  updateGuestField();
   requestAnimationFrame(() => {
     rsvpSheet.classList.add('is-open');
     rsvpSheet.querySelector('.rsvp-sheet-panel')?.scrollTo(0, 0);
@@ -312,10 +313,36 @@ function updateGuestField() {
   const declining = attendance === 'no';
 
   guestsGroup.classList.toggle('hidden', declining);
-  guestInputs.forEach((input) => {
-    input.required = !declining;
+  headcountInputs.forEach((input) => {
     if (declining) input.checked = false;
   });
+}
+
+function validateRsvpForm() {
+  const formData = new FormData(rsvpForm);
+  const name = String(formData.get('name') || '').trim();
+  const attendance = formData.get('attendance');
+  const prediction = formData.get('prediction');
+  const adults = formData.get('adults');
+  const kids = formData.get('kids');
+
+  if (!name) {
+    return 'Please enter your name.';
+  }
+  if (!attendance) {
+    return 'Please choose whether you can attend.';
+  }
+  if (!prediction) {
+    return 'Please pick Team Boy or Team Girl.';
+  }
+  if (attendance !== 'no' && !adults) {
+    return 'Please select how many adults are coming.';
+  }
+  if (attendance !== 'no' && kids === null) {
+    return 'Please select how many kids are coming (choose 0 if none).';
+  }
+
+  return null;
 }
 
 function showSuccessScreen(payload) {
@@ -344,13 +371,22 @@ attendanceInputs.forEach((input) => {
 rsvpForm.addEventListener('submit', async (e) => {
   e.preventDefault();
 
+  const validationError = validateRsvpForm();
+  if (validationError) {
+    formStatus.textContent = validationError;
+    formStatus.classList.remove('hidden', 'success');
+    formStatus.classList.add('error');
+    return;
+  }
+
   const formData = new FormData(rsvpForm);
   const attendance = formData.get('attendance');
   const payload = {
-    name: formData.get('name').trim(),
+    name: String(formData.get('name')).trim(),
     attendance,
     prediction: formData.get('prediction'),
-    guests: attendance === 'no' ? '0' : formData.get('guests'),
+    adults: attendance === 'no' ? '0' : formData.get('adults'),
+    kids: attendance === 'no' ? '0' : formData.get('kids'),
   };
 
   submitBtn.disabled = true;

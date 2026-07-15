@@ -85,17 +85,17 @@
           <h2 id="rsvp-title">RSVP 🐝</h2>
         </div>
 
-        <form id="rsvp-form" class="rsvp-form rsvp-form-compact">
+        <form id="rsvp-form" class="rsvp-form rsvp-form-compact" novalidate>
           <div class="form-group">
             <label for="name">Your Name</label>
-            <input type="text" id="name" name="name" required placeholder="Who's buzzing in?" autocomplete="name" />
+            <input type="text" id="name" name="name" placeholder="Who's buzzing in?" autocomplete="name" />
           </div>
 
           <div class="form-group">
             <label>Will you attend?</label>
             <div class="radio-group radio-group-compact">
               <label class="radio-pill">
-                <input type="radio" name="attendance" value="yes" required />
+                <input type="radio" name="attendance" value="yes" />
                 <span>Absolutely, yes!</span>
               </label>
               <label class="radio-pill">
@@ -113,7 +113,7 @@
             <label>Team Boy or Girl?</label>
             <div class="team-picker team-picker-compact">
               <label class="team-option team-boy">
-                <input type="radio" name="prediction" value="boy" required />
+                <input type="radio" name="prediction" value="boy" />
                 <span class="team-card">
                   <span class="team-emoji">💙</span>
                   <span class="team-label">Boy</span>
@@ -130,28 +130,56 @@
           </div>
 
           <div class="form-group" id="guests-group">
-            <label>How many guests?</label>
-            <div class="guest-picker">
-              <label class="guest-option">
-                <input type="radio" name="guests" value="1" required />
-                <span>1</span>
-              </label>
-              <label class="guest-option">
-                <input type="radio" name="guests" value="2" />
-                <span>2</span>
-              </label>
-              <label class="guest-option">
-                <input type="radio" name="guests" value="3" />
-                <span>3</span>
-              </label>
-              <label class="guest-option">
-                <input type="radio" name="guests" value="4" />
-                <span>4</span>
-              </label>
-              <label class="guest-option">
-                <input type="radio" name="guests" value="5" />
-                <span>5+</span>
-              </label>
+            <label>Head count</label>
+            <div class="headcount-row">
+              <span class="headcount-label">Adults</span>
+              <div class="guest-picker guest-picker--headcount">
+                <label class="guest-option">
+                  <input type="radio" name="adults" value="1" />
+                  <span>1</span>
+                </label>
+                <label class="guest-option">
+                  <input type="radio" name="adults" value="2" />
+                  <span>2</span>
+                </label>
+                <label class="guest-option">
+                  <input type="radio" name="adults" value="3" />
+                  <span>3</span>
+                </label>
+                <label class="guest-option">
+                  <input type="radio" name="adults" value="4" />
+                  <span>4</span>
+                </label>
+                <label class="guest-option">
+                  <input type="radio" name="adults" value="5" />
+                  <span>5+</span>
+                </label>
+              </div>
+            </div>
+            <div class="headcount-row">
+              <span class="headcount-label">Kids</span>
+              <div class="guest-picker guest-picker--headcount">
+                <label class="guest-option">
+                  <input type="radio" name="kids" value="0" />
+                  <span>0</span>
+                </label>
+                <label class="guest-option">
+                  <input type="radio" name="kids" value="1" />
+                  <span>1</span>
+                </label>
+                <label class="guest-option">
+                  <input type="radio" name="kids" value="2" />
+                  <span>2</span>
+                </label>
+                <label class="guest-option">
+                  <input type="radio" name="kids" value="3" />
+                  <span>3</span>
+                </label>
+                <label class="guest-option">
+                  <input type="radio" name="kids" value="4" />
+                  <span>4+</span>
+                </label>
+              </div>
             </div>
           </div>
 
